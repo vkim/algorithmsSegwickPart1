@@ -26,43 +26,66 @@ public static void main(String[] args) {
             points[i] = p;
         }
 
-       	Arrays.sort(points);       	
-        
-       	for (int i = 0; i < N; i++) {
+       	Arrays.sort(points);
+       	
+       	for (int i = 0; i < N-1; i++) {
+
+       		Point[] tmpPoints = Arrays.copyOf(points, points.length);
        		
+       		Arrays.sort(tmpPoints, points[i].SLOPE_ORDER);
        		
-       		
-       		
+       		checkIfAnyPointsHaveEqualSlopes(points[i], tmpPoints);       		
        	}
        	
-       	
-       	
-       	
-        for (int i = 0; i < N; i++) {
-        	for (int j = i+1; j < N; j++) {
-        		for (int k = j+1; k < N; k++) {
-        			for (int y = k+1; y < N; y++) {
-        			
-        				Point a = points[i]; 
-        				Point b = points[j]; 
-        				Point c = points[k]; 
-        				Point d = points[y]; 
-        				
-        				if(a.slopeTo(b) == a.slopeTo(c) && a.slopeTo(c) == a.slopeTo(d)) {
-        					StdOut.println(a + " -> " + b + " -> " + c + " -> " + d);
-        					a.drawTo(d);
-        				}
-        			}
-        		}
-        	}
-        }
-    
      // display to screen all at once
         StdDraw.show(0);
         
         // reset the pen radius
         StdDraw.setPenRadius();
    }
+
+	private static void checkIfAnyPointsHaveEqualSlopes(Point i, Point[] tmpPoints) {
+		
+		int count=0;
+		
+		for(int j = 0; j<tmpPoints.length-1;j++) {
+			
+			if(i.slopeTo(tmpPoints[j]) == i.slopeTo(tmpPoints[j+1])) {
+				count++;
+			}
+			else {
+				
+				//more than 3 adjacent points
+				if(count > 1 ) {
+					
+					System.out.printf("tmpPoints = %s, j=%s, count=%s", Arrays.toString(tmpPoints), j, count);
+					
+					Arrays.sort(tmpPoints, j-count-1,j);
+					
+					//if i is the first in the line
+					if(i.compareTo(tmpPoints[j-count-1])>0) {
+						printLine(j-count-1, j, tmpPoints, i);
+					}
+				}
+				
+				count = 0;
+			}
+		}
+		
+	}
+
+	private static void printLine(int i, int j, Point[] tmpPoints, Point first) {
+		
+		for(int a=i;a<j-1;a++) {
+			StdOut.print(tmpPoints[a] + " -> ");
+		}
+		
+		StdOut.println(tmpPoints[j-1]);
+		
+		first.drawTo(tmpPoints[j-1]);	
+	}
 	
 	
 }
+
+
