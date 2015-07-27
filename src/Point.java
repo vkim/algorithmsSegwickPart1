@@ -20,9 +20,16 @@ public class Point implements Comparable<Point> {
 		@Override
 		public int compare(Point o1, Point o2) {
 			
-			double diff = Point.this.slopeTo(o1) - Point.this.slopeTo(o2);
+			double slope1 = Point.this.slopeTo(o1);
+			double slope2 = Point.this.slopeTo(o2);
 			
-			return  diff < 0.0 ? -1 : diff == 0.0 ? 0 : 1;			
+			if (slope1 == slope2) {
+                return 0;
+            }
+            if (slope1 < slope2) {
+                return -1;
+            }
+            return 1;
 		}
 	};       
 
@@ -51,20 +58,32 @@ public class Point implements Comparable<Point> {
     // slope between this point and that point
     public double slopeTo(Point that) {
     	
-    	if(y != 0 && (that.y - y) == 0) return 0.0;
-    	
-    	double sl = ((float) that.y - y) / ((float)that.x - x);
-    	
-        return sl;
+    	if (that == null) {
+            throw new NullPointerException();
+        }
+        if (that.x == x) {
+            if (that.y == y) {
+                return Double.NEGATIVE_INFINITY;
+            }
+            return Double.POSITIVE_INFINITY;
+        }
+        if (that.y == y) {
+            return 0.0;
+        }
+        return (double) (that.y - this.y) / (that.x - this.x);
     }
 
     // is this point lexicographically smaller than that one?
     // comparing y-coordinates and breaking ties by x-coordinates
     public int compareTo(Point that) {
 
-    	if(y == that.y) return x - that.x;
-    	
-    	return y - that.y;    	
+    	if (y == that.y && x == that.x) {
+            return 0;
+        }
+        if (y < that.y || (y == that.y && x < that.x)) {
+            return -1;
+        }
+        return 1;	
     }
 
     // return string representation of this point
